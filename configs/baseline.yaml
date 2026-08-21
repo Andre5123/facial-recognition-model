@@ -1,0 +1,53 @@
+# Baseline training configuration.
+# Every hyperparameter that affects reproducibility should live here rather
+# than as a hardcoded constant in training code.
+
+seed: 42
+
+data:
+  root: null # path to CASIA-WebFace root (identity-per-folder layout); set locally, never committed
+  image_size: 112
+  # Identities held out entirely (never seen during training) for the
+  # "unseen identity" generalization evaluation.
+  unseen_identity_fraction: 0.05
+  # Within the *remaining* (training-eligible) identities, fraction of each
+  # identity's images held out for the "seen identity, unseen image" eval.
+  held_out_image_fraction: 0.1
+  split_seed: 42
+
+model:
+  architecture: mobilefacenet
+  embedding_dim: 256
+
+arcface:
+  margin: 0.5
+  scale: 64.0
+
+train:
+  batch_size: 128
+  epochs: 30
+  optimizer: sgd
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 5.0e-4
+  lr_schedule: multistep
+  lr_milestones: [16, 24, 28]
+  lr_gamma: 0.1
+  num_workers: 4
+  amp: true # mixed precision; helps throughput on the integrated GPU
+
+augmentation:
+  horizontal_flip: true
+  # Kept deliberately minimal for the baseline; extend only if validation
+  # results indicate under/overfitting.
+
+eval:
+  batch_size: 256
+  verification_pairs_seen: 6000
+  verification_pairs_unseen: 6000
+  far_targets: [0.01, 0.001]
+
+checkpointing:
+  dir: checkpoints/baseline
+  save_every_epochs: 1
+  keep_best: true

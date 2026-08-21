@@ -1,0 +1,4 @@
+# CPU-only PyTorch, for local smoke-testing of model/loss code on Windows
+# (shape checks, unit tests) -- NOT the environment used for actual training.
+# Install with:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu

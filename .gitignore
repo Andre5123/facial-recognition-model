@@ -1,6 +1,7 @@
 # Datasets (never commit CASIA-WebFace, LFW, or any other face data)
 data/raw/
 data/processed/
+data/splits/
 data/**/*.jpg
 data/**/*.jpeg
 data/**/*.png
@@ -25,6 +26,7 @@ __pycache__/
 *.pyc
 *.pyo
 .venv/
+.venv*/
 venv/
 env/
 *.egg-info/
