@@ -1,0 +1,44 @@
+# Datasets (never commit CASIA-WebFace, LFW, or any other face data)
+data/raw/
+data/processed/
+data/**/*.jpg
+data/**/*.jpeg
+data/**/*.png
+data/**/*.bmp
+*.zip
+*.tar
+*.tar.gz
+
+# Checkpoints / large generated artifacts
+checkpoints/
+runs/
+outputs/
+logs/
+wandb/
+*.pt
+*.pth
+*.onnx
+*.ckpt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Env files that may contain secrets
+.env
