@@ -105,7 +105,7 @@ py -3.12 -m venv .venv-smoketest
 
 - [x] Git installed (Git for Windows 2.55.0.3)
 - [x] Python 3.12 installed on Windows host (for smoke-testing only)
-- [ ] AMD driver updated to 26.2.2+ (admin action required)
-- [ ] WSL2 + Ubuntu installed (admin action required)
+- [x] AMD driver updated to 26.2.2 (2026-02-16 package, installed 2026-08-22)
+- [x] WSL2 + Ubuntu 24.04 installed; `/dev/dxg` present (GPU passthrough confirmed); Python 3.12.3 ships by default
 - [ ] ROCm 7.2.1 installed inside WSL2
 - [ ] PyTorch (ROCm build) installed and verified against the GPU

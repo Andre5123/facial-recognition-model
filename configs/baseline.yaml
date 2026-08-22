@@ -6,6 +6,7 @@ seed: 42
 
 data:
   root: null # path to CASIA-WebFace root (identity-per-folder layout); set locally, never committed
+  splits_dir: data/splits # output of scripts/make_identity_split.py
   image_size: 112
   # Identities held out entirely (never seen during training) for the
   # "unseen identity" generalization evaluation.
