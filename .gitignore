@@ -6,6 +6,11 @@ data/**/*.jpg
 data/**/*.jpeg
 data/**/*.png
 data/**/*.bmp
+# Raw CASIA-WebFace download, extracted at the repo root
+/webface_112x112/
+# TODO: add an entry here for each future eval dataset folder (LFW,
+# AgeDB-30, CFP-FP, CPLFW, ...) as soon as it's downloaded and its actual
+# extracted folder name is known -- do not assume *.zip alone covers it.
 *.zip
 *.tar
 *.tar.gz
