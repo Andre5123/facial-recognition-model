@@ -20,6 +20,7 @@ import yaml
 from torch.utils.data import DataLoader
 
 from data.dataset import FaceDataset, build_transform
+from eval import evaluate_split, tar_at_far
 from losses.arcface import ArcMarginHead
 from models.mobilefacenet import MobileFaceNet
 
@@ -105,6 +106,9 @@ def main():
     num_classes = train_ds.num_classes
     print(f"train images: {len(train_ds)}, identities: {num_classes}", flush=True)
 
+    eval_transform = build_transform(cfg["data"]["image_size"], train=False, horizontal_flip=False)
+    eval_every_epochs = cfg["eval"].get("eval_every_epochs", 1)
+
     train_loader = DataLoader(
         train_ds,
         batch_size=cfg["train"]["batch_size"],
@@ -176,6 +180,35 @@ def main():
         scheduler.step()
         mean_loss = epoch_loss / max(n_batches, 1)
         print(f"epoch {epoch} done, mean_loss={mean_loss:.4f}, time={time.time()-t_epoch0:.1f}s", flush=True)
+
+        if (epoch + 1) % eval_every_epochs == 0:
+            t_eval0 = time.time()
+            sims, labels = evaluate_split(
+                f"epoch {epoch}: seen identity / unseen image",
+                splits_dir / "val_seen.csv",
+                "label",
+                cfg["eval"]["verification_pairs_seen"],
+                cfg["seed"],
+                model,
+                eval_transform,
+                device,
+            )
+            for far, tar in tar_at_far(sims, labels, cfg["eval"]["far_targets"]).items():
+                print(f"TAR@FAR={far}: {tar:.4f}")
+
+            sims, labels = evaluate_split(
+                f"epoch {epoch}: unseen identity",
+                splits_dir / "test_unseen.csv",
+                "identity_name",
+                cfg["eval"]["verification_pairs_unseen"],
+                cfg["seed"],
+                model,
+                eval_transform,
+                device,
+            )
+            for far, tar in tar_at_far(sims, labels, cfg["eval"]["far_targets"]).items():
+                print(f"TAR@FAR={far}: {tar:.4f}")
+            print(f"epoch {epoch} eval took {time.time()-t_eval0:.1f}s", flush=True)
 
         if (epoch + 1) % cfg["checkpointing"]["save_every_epochs"] == 0:
             save_checkpoint(ckpt_dir / f"epoch_{epoch}.pt", epoch, model, head, optimizer, scheduler, cfg)

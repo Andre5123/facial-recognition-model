@@ -47,6 +47,7 @@ eval:
   verification_pairs_seen: 6000
   verification_pairs_unseen: 6000
   far_targets: [0.01, 0.001]
+  eval_every_epochs: 1 # run verification eval after every N epochs during training
 
 checkpointing:
   dir: checkpoints/baseline
