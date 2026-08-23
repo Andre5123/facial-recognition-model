@@ -64,14 +64,38 @@ points of accuracy). Between milestones, loss and accuracy both plateaued
 (and accuracy occasionally dipped slightly) -- expected behavior for
 margin-based softmax training at a fixed LR, not a sign of a broken run.
 
+## Real LFW evaluation (added 2026-08-23)
+
+Downloaded the standard aligned-LFW benchmark (Kaggle
+`yakhyokhuja/agedb-30-calfw-cplfw-lfw-aligned-112x112` mirror, official
+6,000-pair protocol via `lfw_ann.txt`) and evaluated the baseline `best.pt`
+checkpoint against it using `src/eval.py --pairs-file` (added specifically
+to consume this fixed-pairs format rather than our own sampled pairs):
+
+| Benchmark | Accuracy | ROC-AUC | TAR@FAR=0.01 | TAR@FAR=0.001 |
+|---|---|---|---|---|
+| **LFW (real, 6,000 official pairs)** | **95.97% ± 1.17%** | **0.9918** | 0.9010 | 0.6560 |
+| Our seen-identity split (for reference) | 89.57% ± 0.81% | 0.9451 | 0.6693 | 0.5123 |
+| Our unseen-identity split (for reference) | 88.70% ± 1.35% | 0.9394 | 0.7007 | 0.3817 |
+
+The real LFW number is meaningfully higher than either internal metric --
+confirming those internal splits were a harder/different benchmark than
+LFW, not a reliable proxy for it. Published results for this exact
+combination (MobileFaceNet + ArcFace + CASIA-WebFace) report ~99.18% LFW
+(AirFace, ICCVW 2019), using a larger batch size (512 vs our 128) and
+embedding dimension (512 vs our 256) -- the gap to our 95.97% is plausibly
+explained by those hyperparameter differences rather than anything
+fundamentally wrong with the approach. 95.97% is a legitimate, solid
+result for a from-scratch model on CASIA-WebFace, and much closer to the
+project's aspirational ~99% target than the internal-split numbers alone
+suggested.
+
 ## Honest comparison to project goals
 
 The aspirational target in `context.md` is ~99% **LFW** verification
-accuracy. The ~89% figures above are on held-out CASIA-WebFace pairs, not
-LFW -- a different (likely easier, in-domain) benchmark, since LFW has not
-yet been downloaded/evaluated. This baseline result should not be
-interpreted as "89% of the way to the LFW target"; LFW evaluation is
-still outstanding.
+accuracy. With real LFW evaluation now done (above), the honest gap is
+~99% target vs 95.97% actual -- a real but modest remaining gap, not the
+large one the internal-split-only comparison implied.
 
 ## Checkpoints
 
@@ -82,9 +106,11 @@ relying on this run's weights for anything further.
 
 ## Next steps (not yet done)
 
-- Evaluate on actual LFW once downloaded, using the proper verification
-  protocol (context.md's stated benchmark target).
-- AgeDB-30 / CFP-FP / CPLFW evaluation.
+- AgeDB-30 / CPLFW evaluation (CFP-FP not available in the downloaded
+  benchmark mirror; AgeDB-30/CALFW/CPLFW files are present alongside LFW's
+  and use the same `--pairs-file` mechanism -- not yet run).
+- Consider closing the ~3-point gap to the published 99.18% reference by
+  matching their batch size (512) and embedding dim (512), if pursued.
 - Embedding space visualization (PCA/t-SNE/UMAP) and the unseen-identity
   demonstration described in context.md's "Future Work" section.
 - Decide whether further training (more epochs, tuned augmentation) is
