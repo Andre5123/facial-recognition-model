@@ -74,9 +74,18 @@ to consume this fixed-pairs format rather than our own sampled pairs):
 
 | Benchmark | Accuracy | ROC-AUC | TAR@FAR=0.01 | TAR@FAR=0.001 |
 |---|---|---|---|---|
-| **LFW (real, 6,000 official pairs)** | **95.97% ± 1.17%** | **0.9918** | 0.9010 | 0.6560 |
+| **LFW** (real, 6,000 official pairs) | **95.97% ± 1.17%** | **0.9918** | 0.9010 | 0.6560 |
+| **AgeDB-30** (cross-age) | 82.25% ± 3.20% | 0.8972 | 0.2490 | 0.0640 |
+| **CPLFW** (cross-pose) | 76.85% ± 2.47% | 0.8361 | 0.2597 | 0.0590 |
 | Our seen-identity split (for reference) | 89.57% ± 0.81% | 0.9451 | 0.6693 | 0.5123 |
 | Our unseen-identity split (for reference) | 88.70% ± 1.35% | 0.9394 | 0.7007 | 0.3817 |
+
+AgeDB-30 and CPLFW are meaningfully harder than LFW (cross-age and
+cross-pose verification specifically, vs. LFW's more typical same-era
+photos), so the drop-off is expected, not a red flag -- published
+reference models show the same pattern (e.g. a small MobileNetV1_0.25
+trained on MS1MV2 gets 98.76% LFW but only 82.37% CPLFW). CFP-FP wasn't
+evaluated -- not available in the downloaded benchmark mirror.
 
 The real LFW number is meaningfully higher than either internal metric --
 confirming those internal splits were a harder/different benchmark than
@@ -106,9 +115,6 @@ relying on this run's weights for anything further.
 
 ## Next steps (not yet done)
 
-- AgeDB-30 / CPLFW evaluation (CFP-FP not available in the downloaded
-  benchmark mirror; AgeDB-30/CALFW/CPLFW files are present alongside LFW's
-  and use the same `--pairs-file` mechanism -- not yet run).
 - Consider closing the ~3-point gap to the published 99.18% reference by
   matching their batch size (512) and embedding dim (512), if pursued.
 - Embedding space visualization (PCA/t-SNE/UMAP) and the unseen-identity
