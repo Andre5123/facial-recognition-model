@@ -132,10 +132,14 @@ def tar_at_far(similarities: np.ndarray, labels: np.ndarray, far_targets: list[f
     return results
 
 
-def evaluate_split(name: str, manifest_csv: Path, label_col: str, n_pairs: int, seed: int, model, transform, device):
-    by_identity = read_manifest(manifest_csv, label_col)
-    pairs = sample_pairs(by_identity, n_pairs, seed)
-
+def evaluate_pairs(name: str, pairs: list[tuple[str, str, int]], model, transform, device):
+    """Core evaluation primitive: given a fixed list of (path_a, path_b, is_same)
+    pairs, embeds every unique image once, computes cosine similarities, and
+    reports k-fold accuracy + ROC-AUC. Used both for our own sampled in-split
+    pairs and for fixed external benchmark protocols (e.g. LFW's official
+    pairs), so results on a real benchmark use the exact same math as our
+    internal metrics.
+    """
     unique_paths = sorted({p for a, b, _ in pairs for p in (a, b)})
     embeddings = extract_embeddings(model, unique_paths, transform, device)
 
@@ -152,12 +156,50 @@ def evaluate_split(name: str, manifest_csv: Path, label_col: str, n_pairs: int, 
     return sims, labels
 
 
+def evaluate_split(name: str, manifest_csv: Path, label_col: str, n_pairs: int, seed: int, model, transform, device):
+    by_identity = read_manifest(manifest_csv, label_col)
+    pairs = sample_pairs(by_identity, n_pairs, seed)
+    return evaluate_pairs(name, pairs, model, transform, device)
+
+
+def read_pairs_file(pairs_path: Path, root: Path | None = None) -> list[tuple[str, str, int]]:
+    """Reads a fixed verification-pairs annotation file: one pair per line,
+    formatted as `is_same path1 path2` (0/1 and paths space-separated).
+    This is the format yakhyo/face-recognition uses for its LFW/CFP-FP/
+    AgeDB_30/CALFW/CPLFW annotation files -- inspect the actual downloaded
+    file first to confirm before trusting this blindly (same rule as
+    scripts/inspect_dataset.py for the training set).
+    """
+    pairs = []
+    with open(pairs_path, encoding="utf-8") as f:
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) != 3:
+                continue
+            is_same, path1, path2 = parts
+            if root is not None:
+                path1 = str(root / path1)
+                path2 = str(root / path2)
+            pairs.append((path1, path2, int(is_same)))
+    return pairs
+
+
+def evaluate_pairs_file(name: str, pairs_path: Path, model, transform, device, root: Path | None = None):
+    pairs = read_pairs_file(pairs_path, root)
+    return evaluate_pairs(name, pairs, model, transform, device)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("configs/baseline.yaml"))
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--splits-dir", type=str, default=None, help="override data.splits_dir")
-    parser.add_argument("--split", choices=["seen", "unseen", "both"], default="both")
+    parser.add_argument("--split", choices=["seen", "unseen", "both", "none"], default="both")
+    parser.add_argument(
+        "--pairs-file", type=Path, default=None, help="external benchmark pairs file (e.g. LFW's lfw_ann.txt)"
+    )
+    parser.add_argument("--pairs-name", type=str, default="external", help="label for --pairs-file in the report")
+    parser.add_argument("--pairs-root", type=Path, default=None, help="prefix directory for relative paths in --pairs-file")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     args = parser.parse_args()
 
@@ -201,6 +243,11 @@ def main():
             transform,
             device,
         )
+        for far, tar in tar_at_far(sims, labels, far_targets).items():
+            print(f"TAR@FAR={far}: {tar:.4f}")
+
+    if args.pairs_file:
+        sims, labels = evaluate_pairs_file(args.pairs_name, args.pairs_file, model, transform, device, args.pairs_root)
         for far, tar in tar_at_far(sims, labels, far_targets).items():
             print(f"TAR@FAR={far}: {tar:.4f}")
 
