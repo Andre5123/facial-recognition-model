@@ -30,6 +30,17 @@ from sklearn.metrics import roc_auc_score, roc_curve
 
 from data.dataset import build_transform
 from models.mobilefacenet import MobileFaceNet
+from models.mobilenet_pretrained import MobileNetV2Embedding
+
+
+def build_model(cfg: dict):
+    arch = cfg["model"]["architecture"]
+    embedding_dim = cfg["model"]["embedding_dim"]
+    if arch == "mobilefacenet":
+        return MobileFaceNet(embedding_dim=embedding_dim)
+    if arch == "mobilenet_v2_pretrained":
+        return MobileNetV2Embedding(embedding_dim=embedding_dim, pretrained=True)
+    raise ValueError(f"unknown model.architecture: {arch}")
 
 
 def read_manifest(csv_path: Path, label_col: str) -> dict[str, list[str]]:
@@ -157,7 +168,7 @@ def main():
     splits_dir = Path(cfg["data"]["splits_dir"])
 
     device = args.device
-    model = MobileFaceNet(embedding_dim=cfg["model"]["embedding_dim"]).to(device)
+    model = build_model(cfg).to(device)
     ckpt = torch.load(args.checkpoint, map_location=device)
     model.load_state_dict(ckpt["model_state"])
     print(f"loaded checkpoint from epoch {ckpt['epoch']}: {args.checkpoint}")

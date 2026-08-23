@@ -1,0 +1,55 @@
+# Experiment: ImageNet-pretrained MobileNetV2 backbone fine-tuned with
+# ArcFace, compared against the from-scratch MobileFaceNet baseline
+# (configs/baseline.yaml, results in docs/RESULTS_baseline.md).
+#
+# Everything except model.architecture and train.lr matches the baseline
+# config, so results are comparable.
+
+seed: 42
+
+data:
+  root: null
+  splits_dir: data/splits
+  image_size: 112
+  unseen_identity_fraction: 0.05
+  held_out_image_fraction: 0.1
+  split_seed: 42
+
+model:
+  architecture: mobilenet_v2_pretrained
+  embedding_dim: 256
+
+arcface:
+  margin: 0.5
+  scale: 64.0
+
+train:
+  batch_size: 128
+  epochs: 30
+  optimizer: sgd
+  # Lower than the from-scratch baseline's 0.1 -- standard practice when
+  # fine-tuning pretrained weights, to avoid destroying them with large
+  # early updates before the randomly-initialized head has caught up.
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 5.0e-4
+  lr_schedule: multistep
+  lr_milestones: [16, 24, 28]
+  lr_gamma: 0.1
+  num_workers: 4
+  amp: true
+
+augmentation:
+  horizontal_flip: true
+
+eval:
+  batch_size: 256
+  verification_pairs_seen: 6000
+  verification_pairs_unseen: 6000
+  far_targets: [0.01, 0.001]
+  eval_every_epochs: 1
+
+checkpointing:
+  dir: checkpoints/mobilenet_pretrained
+  save_every_epochs: 1
+  keep_best: true

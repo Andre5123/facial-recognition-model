@@ -20,9 +20,8 @@ import yaml
 from torch.utils.data import DataLoader
 
 from data.dataset import FaceDataset, build_transform
-from eval import evaluate_split, tar_at_far
+from eval import build_model, evaluate_split, tar_at_far
 from losses.arcface import ArcMarginHead
-from models.mobilefacenet import MobileFaceNet
 
 
 def set_seed(seed: int):
@@ -118,7 +117,7 @@ def main():
         drop_last=True,
     )
 
-    model = MobileFaceNet(embedding_dim=cfg["model"]["embedding_dim"]).to(device)
+    model = build_model(cfg).to(device)
     head = ArcMarginHead(
         cfg["model"]["embedding_dim"], num_classes, margin=cfg["arcface"]["margin"], scale=cfg["arcface"]["scale"]
     ).to(device)
