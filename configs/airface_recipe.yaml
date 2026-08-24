@@ -1,0 +1,59 @@
+# Experiment: match the published AirFace (ICCVW 2019) recipe for
+# MobileFaceNet + ArcFace + CASIA-WebFace, which reports 99.18% LFW --
+# vs. our baseline's 95.97% (see docs/RESULTS_baseline.md).
+#
+# Differences from configs/baseline.yaml: batch_size 128->512, embedding_dim
+# 256->512. LR is deliberately left at 0.1 (unchanged) -- the published
+# recipe uses the same LR despite the larger batch, rather than scaling it
+# up, so we're replicating their reported working config rather than
+# guessing our own scaling rule. Everything else (optimizer, LR milestones,
+# augmentation, epochs) is unchanged from the baseline for comparability.
+#
+# Uses a separate checkpoint dir from the baseline run -- does not
+# overwrite or touch its checkpoints.
+
+seed: 42
+
+data:
+  root: null
+  splits_dir: data/splits
+  image_size: 112
+  unseen_identity_fraction: 0.05
+  held_out_image_fraction: 0.1
+  split_seed: 42
+
+model:
+  architecture: mobilefacenet
+  embedding_dim: 512
+
+arcface:
+  margin: 0.5
+  scale: 64.0
+
+train:
+  batch_size: 512
+  epochs: 30
+  optimizer: sgd
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 5.0e-4
+  lr_schedule: multistep
+  lr_milestones: [16, 24, 28]
+  lr_gamma: 0.1
+  num_workers: 4
+  amp: true
+
+augmentation:
+  horizontal_flip: true
+
+eval:
+  batch_size: 256
+  verification_pairs_seen: 6000
+  verification_pairs_unseen: 6000
+  far_targets: [0.01, 0.001]
+  eval_every_epochs: 1
+
+checkpointing:
+  dir: checkpoints/airface_recipe
+  save_every_epochs: 1
+  keep_best: true
