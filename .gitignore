@@ -8,6 +8,11 @@ data/**/*.png
 data/**/*.bmp
 # Raw CASIA-WebFace download, extracted at the repo root
 /webface_112x112/
+# Exported viz data/pages embed actual (small) face thumbnails from the
+# dataset -- fine to keep locally for personal analysis, but not for the
+# public git repo (same redistribution concern as the raw dataset).
+docs/embedding_viz_data.json
+docs/embedding_explorer.html
 # TODO: add an entry here for each future eval dataset folder (LFW,
 # AgeDB-30, CFP-FP, CPLFW, ...) as soon as it's downloaded and its actual
 # extracted folder name is known -- do not assume *.zip alone covers it.
