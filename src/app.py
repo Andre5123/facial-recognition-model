@@ -97,6 +97,52 @@ def do_enroll(image, name, gallery):
     return gallery, _gallery_summary(gallery), crop, f"Enrolled '{name}' ({len(gallery[name])} reference image(s))."
 
 
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
+
+
+def do_bulk_enroll(folder_path, gallery):
+    """Enrolls everyone in a local folder shaped like:
+        <folder_path>/<person name>/<image1.jpg>, <image2.jpg>, ...
+    (the same one-folder-per-identity convention used throughout this
+    project -- see docs/DATASET.md, scripts/make_identity_split.py.)
+    Skips individual images with no detected face rather than failing the
+    whole batch.
+    """
+    gallery = dict(gallery or {})
+    if not folder_path or not folder_path.strip():
+        return gallery, _gallery_summary(gallery), "Provide a folder path."
+
+    root = Path(folder_path.strip())
+    if not root.is_dir():
+        return gallery, _gallery_summary(gallery), f"'{root}' is not a folder."
+
+    person_dirs = sorted(p for p in root.iterdir() if p.is_dir())
+    if not person_dirs:
+        return gallery, _gallery_summary(gallery), f"No subfolders found in '{root}' -- expected one folder per person."
+
+    enrolled_people, enrolled_images, skipped = 0, 0, 0
+    for person_dir in person_dirs:
+        name = person_dir.name
+        image_paths = sorted(p for p in person_dir.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS)
+        added_any = False
+        for image_path in image_paths:
+            try:
+                with Image.open(image_path) as img:
+                    emb, _crop = engine.embed(img)
+            except NoFaceDetected:
+                skipped += 1
+                continue
+            gallery.setdefault(name, [])
+            gallery[name].append(emb.tolist())
+            enrolled_images += 1
+            added_any = True
+        if added_any:
+            enrolled_people += 1
+
+    status = f"Bulk-enrolled {enrolled_people} people ({enrolled_images} images total, {skipped} skipped -- no face detected)."
+    return gallery, _gallery_summary(gallery), status
+
+
 def do_clear_gallery():
     return {}, _gallery_summary({}), "Gallery cleared."
 
@@ -176,6 +222,15 @@ def build_ui():
                     enroll_name = gr.Textbox(label="Name")
                     enroll_btn = gr.Button("Enroll")
                     enroll_status = gr.Textbox(label="Status", interactive=False)
+
+                    gr.Markdown(
+                        "### Bulk enroll from a folder\n"
+                        "Local folder shaped like `<folder>/<person name>/<photo1.jpg>, <photo2.jpg>, ...` "
+                        "-- one subfolder per person. See `docs/DEMO.md`."
+                    )
+                    bulk_folder = gr.Textbox(label="Folder path", placeholder=r"C:\path\to\photos")
+                    bulk_btn = gr.Button("Bulk enroll")
+
                     clear_btn = gr.Button("Clear gallery")
                     gallery_display = gr.Textbox(label="Enrolled", value="(no one enrolled yet)", interactive=False)
 
@@ -196,6 +251,7 @@ def build_ui():
                 [enroll_img, enroll_name, gallery_state],
                 [gallery_state, gallery_display, enroll_crop, enroll_status],
             )
+            bulk_btn.click(do_bulk_enroll, [bulk_folder, gallery_state], [gallery_state, gallery_display, enroll_status])
             clear_btn.click(do_clear_gallery, [], [gallery_state, gallery_display, enroll_status])
             identify_btn.click(
                 do_identify,

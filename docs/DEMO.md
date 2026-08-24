@@ -50,6 +50,31 @@ someone else try it remotely.
     similarity falls below the threshold -- the more realistic mode, since
     a real gallery usually doesn't contain everyone who might show up.
 
+## Bulk enrolling a folder of people
+
+Enrolling one photo at a time through the UI doesn't scale if you want to
+test with more than a couple of people. The "Bulk enroll from a folder"
+box takes a local folder path shaped like:
+
+```
+some_folder/
+  Alice/
+    photo1.jpg
+    photo2.jpg
+  Bob/
+    photo1.jpg
+```
+
+One subfolder per person (folder name = enrolled name), any number of
+photos inside. This is the same one-folder-per-identity convention used
+throughout the rest of this project (`webface_112x112/`, `data/splits/`,
+`scripts/make_identity_split.py`) -- deliberately just the one simple,
+already-established format rather than trying to auto-detect various
+dataset layouts. Point it at a folder you've organized yourself (your own
+photos, or a small hand-picked subset of any dataset reorganized into this
+shape) and it enrolls everyone in one click, skipping any individual photo
+where no face is detected rather than failing the whole batch.
+
 ## Default threshold
 
 The default (0.95) comes from the genuine/impostor similarity stats
