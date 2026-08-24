@@ -1,6 +1,12 @@
-"""Exports embedding visualization data (2D projections + thumbnails) as JSON,
-for the interactive Artifact viewer. Reuses the exact same sampling as
+"""Exports embedding visualization data (2D projections only, no images) as
+JSON, for the interactive HTML viewer. Reuses the exact same sampling as
 visualize_embeddings.py (same seed) so results match the static PNGs.
+
+Deliberately does NOT embed any face images/thumbnails, even downscaled --
+CASIA-WebFace is restricted to non-commercial research/educational use (see
+docs/DATASET.md), and the viewer this feeds may end up more widely shared
+than a purely local analysis script, so no image data derived from the
+dataset is included here at all.
 
 Usage:
     python src/export_embedding_viz_data.py --config configs/baseline.yaml \
@@ -10,29 +16,18 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import base64
-import io
 import json
 from pathlib import Path
 
 import numpy as np
 import torch
 import yaml
-from PIL import Image
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 from data.dataset import build_transform
 from eval import build_model, extract_embeddings
 from visualize_embeddings import sample_identities
-
-
-def make_thumbnail_b64(path: str, size: int = 56) -> str:
-    with Image.open(path) as img:
-        img = img.convert("RGB").resize((size, size), Image.LANCZOS)
-        buf = io.BytesIO()
-        img.save(buf, format="JPEG", quality=82)
-        return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
 def main():
@@ -113,7 +108,6 @@ def main():
                 "unseen": is_unseen[i],
                 "pca": None,  # filled below
                 "tsne": None,
-                "thumb": make_thumbnail_b64(path),
             }
         )
 
