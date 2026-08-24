@@ -1,0 +1,4 @@
+# Extra dependencies for the interactive demo (src/app.py), on top of
+# requirements/base.txt + a torch/torchvision install (see requirements/torch-*.txt).
+gradio
+mediapipe
