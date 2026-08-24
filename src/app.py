@@ -136,7 +136,12 @@ def _no_face_result_identify():
 
 
 def build_ui():
-    with gr.Blocks(title="Face Recognition Demo") as demo:
+    # Gradio already deletes cached uploads/webcam captures when the browser
+    # tab closes cleanly, but that relies on the close event actually firing.
+    # delete_cache adds a guarantee that doesn't depend on that: every 5
+    # minutes, delete any cached file older than 5 minutes, regardless of
+    # how the session ended (crash, Ctrl+C, force-closed tab, etc.).
+    with gr.Blocks(title="Face Recognition Demo", delete_cache=(300, 300)) as demo:
         gr.Markdown(
             "# Face Recognition Demo\n"
             "From-scratch MobileFaceNet + ArcFace, 95.97% LFW verification accuracy "
