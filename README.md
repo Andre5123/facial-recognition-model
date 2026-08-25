@@ -1,6 +1,7 @@
 # Face Recognition
 
-A face embedding model trained on CASIA-WebFace, plus an interactive demo
+A face embedding model (used for a facial recognition system) 
+trained on CASIA-WebFace, plus an interactive demo
 for trying it on your own photos or webcam. The current baseline below was
 trained from scratch (randomly initialized weights, no pretrained
 face-recognition or generic-pretrained weights); pretrained-backbone
