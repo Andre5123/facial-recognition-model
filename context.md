@@ -1,5 +1,19 @@
 # Project Context: From-Scratch Face Embedding Model
 
+## Amendment (2026-08-23)
+
+The "from scratch" / "no pretrained weights" constraint below no longer
+applies. It was useful for getting the project started, but after the
+from-scratch MobileFaceNet + ArcFace baseline (30 epochs, CASIA-WebFace,
+Colab T4) plateaued around 89.6% seen / 88.7% unseen internal verification
+accuracy (95.97% on real LFW -- see `docs/RESULTS_baseline.md`), the
+project's direction shifted to experimenting with pretrained backbones
+(e.g. an ImageNet-pretrained MobileNetV2/V3 or ResNet) to try to push past
+that plateau. The rest of this document is kept as the original project
+spec / historical record; treat this amendment as authoritative wherever
+it conflicts with sections below (particularly "Model" and "Important
+Constraints").
+
 ## Goal
 
 I want to build my own face-recognition system by training a face-embedding model from scratch.
@@ -79,7 +93,8 @@ Face image
 → normalized face embedding
 → cosine similarity / nearest-neighbor comparison
 
-Do not use pretrained face-recognition weights.
+Do not use pretrained face-recognition weights. (Superseded 2026-08-23 --
+see "Amendment" above.)
 
 ## Identity Split / Generalization
 
@@ -244,8 +259,8 @@ This should demonstrate that the model is learning a generalizable face represen
 
 ## Important Constraints
 
-* Do not use pretrained face-recognition weights.
-* MobileFaceNet may be used as an architecture, but its weights should start randomly initialized.
+* Do not use pretrained face-recognition weights. (Superseded 2026-08-23 -- see "Amendment" above.)
+* MobileFaceNet may be used as an architecture, but its weights should start randomly initialized. (Superseded 2026-08-23 for follow-on experiments -- see "Amendment" above.)
 * Do not include CASIA-WebFace in the GitHub repository.
 * Verify the dataset's actual licensing/usage terms rather than assuming it is open-source.
 * Do not redistribute CASIA-WebFace images.

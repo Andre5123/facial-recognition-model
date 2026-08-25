@@ -23,7 +23,6 @@ docs/embedding_explorer.html
 *.tar.gz
 
 # Checkpoints / large generated artifacts
-checkpoints/
 runs/
 outputs/
 logs/
@@ -32,6 +31,12 @@ wandb/
 *.pth
 *.onnx
 *.ckpt
+# checkpoints/ is ignored by default, except the baseline checkpoint, which
+# is small (~28MB) and is what the demo needs to run out-of-the-box.
+checkpoints/*
+!checkpoints/baseline/
+checkpoints/baseline/*
+!checkpoints/baseline/epoch_29.pt
 
 # Python
 __pycache__/

@@ -30,17 +30,13 @@ from sklearn.metrics import roc_auc_score, roc_curve
 
 from data.dataset import build_transform
 from models.mobilefacenet import MobileFaceNet
-from models.mobilenet_pretrained import MobileNetV2Embedding
 
 
 def build_model(cfg: dict):
     arch = cfg["model"]["architecture"]
-    embedding_dim = cfg["model"]["embedding_dim"]
-    if arch == "mobilefacenet":
-        return MobileFaceNet(embedding_dim=embedding_dim)
-    if arch == "mobilenet_v2_pretrained":
-        return MobileNetV2Embedding(embedding_dim=embedding_dim, pretrained=True)
-    raise ValueError(f"unknown model.architecture: {arch}")
+    if arch != "mobilefacenet":
+        raise ValueError(f"unknown model.architecture: {arch}")
+    return MobileFaceNet(embedding_dim=cfg["model"]["embedding_dim"])
 
 
 def read_manifest(csv_path: Path, label_col: str) -> dict[str, list[str]]:

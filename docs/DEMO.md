@@ -5,7 +5,7 @@ verification (1:1: "are these the same person?") and recognition (1:N:
 "who is this, out of the people I've enrolled?", with an open-set mode
 that can say "not recognized" instead of forcing a match).
 
-## Why this exists, and its real limitation
+## Preprocessing
 
 The model was trained entirely on pre-aligned 112x112 CASIA-WebFace crops
 (see `docs/DATASET.md`). A raw photo or webcam frame isn't aligned like
@@ -74,6 +74,19 @@ dataset layouts. Point it at a folder you've organized yourself (your own
 photos, or a small hand-picked subset of any dataset reorganized into this
 shape) and it enrolls everyone in one click, skipping any individual photo
 where no face is detected rather than failing the whole batch.
+
+Don't have a folder of photos handy? `scripts/fetch_demo_test_photos.py`
+downloads a small, well-photographed subset of LFW and saves it already in
+this exact folder-per-person shape:
+
+```bash
+python scripts/fetch_demo_test_photos.py --output-dir demo_test_photos
+```
+
+Then point the bulk-enroll box at `demo_test_photos`. These are real faces
+from the public LFW benchmark and none of them were in the model's
+training data (CASIA-WebFace) -- a genuine test of generalization, not a
+memorization check.
 
 ## Default threshold
 

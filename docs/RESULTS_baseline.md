@@ -24,11 +24,6 @@ the first account's Drive, re-uploaded into the second session) -- see
 chat history for the account-switch procedure. Training throughput was
 ~800-880 images/sec once warmed up; ~480-580s/epoch.
 
-Note: this run was NOT done on the local AMD Radeon 880M setup documented
-in `docs/ENVIRONMENT_SETUP.md` -- that GPU measured ~55-65 img/s for this
-same model (see that doc / project chat history), which is why Colab's T4
-was used for the actual training run instead.
-
 ## Final results (epoch 29 of 30, i.e. after the full schedule)
 
 Verification evaluated via `src/eval.py`: 6,000 sampled pairs per split
@@ -113,11 +108,13 @@ under the training account used (`facial-recognition-checkpoints/`), not
 committed to this repo (see `.gitignore`). Download a local copy before
 relying on this run's weights for anything further.
 
-## Next steps (not yet done)
+## Since this run
 
-- Consider closing the ~3-point gap to the published 99.18% reference by
-  matching their batch size (512) and embedding dim (512), if pursued.
-- Embedding space visualization (PCA/t-SNE/UMAP) and the unseen-identity
-  demonstration described in context.md's "Future Work" section.
-- Decide whether further training (more epochs, tuned augmentation) is
-  worthwhile before or after LFW results are in hand.
+- Embedding space visualization and the unseen-identity generalization
+  demonstration from context.md's "Future Work" section: done, see
+  `docs/VISUALIZATIONS.md`.
+- Interactive verification/recognition demo built on this checkpoint: done,
+  see `docs/DEMO.md`.
+- Still open: closing the ~3-point gap to the published 99.18% reference --
+  see `docs/RESUMING.md` for the directions being considered (pretrained
+  backbones, matching published batch size/embedding dim).
