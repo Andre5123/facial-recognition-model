@@ -115,6 +115,7 @@ relying on this run's weights for anything further.
   `docs/VISUALIZATIONS.md`.
 - Interactive verification/recognition demo built on this checkpoint: done,
   see `docs/DEMO.md`.
-- Still open: closing the ~3-point gap to the published 99.18% reference --
-  see `docs/RESUMING.md` for the directions being considered (pretrained
-  backbones, matching published batch size/embedding dim).
+- Still open: closing the ~3-point gap to the published 99.18% reference.
+  Directions being considered: pretrained backbones (see context.md's
+  "Amendment" section) and matching the published recipe's batch size/
+  embedding dim more closely.

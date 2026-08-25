@@ -5,8 +5,7 @@ for trying it on your own photos or webcam. The current baseline below was
 trained from scratch (randomly initialized weights, no pretrained
 face-recognition or generic-pretrained weights); pretrained-backbone
 experiments (e.g. an ImageNet-pretrained MobileNet/ResNet) are the current
-direction for pushing past it -- see
-[`docs/RESUMING.md`](docs/RESUMING.md).
+direction for pushing past it.
 
 **Pipeline:** CASIA-WebFace &rarr; MobileFaceNet &rarr; ArcFace loss &rarr;
 256-dimensional L2-normalized face embeddings &rarr; cosine similarity for
@@ -93,9 +92,8 @@ docs/                        results, dataset, demo, and visualization writeups
    ```bash
    python eval.py --config ../configs/baseline.yaml --checkpoint ../checkpoints/baseline/best.pt
    ```
-   See [`docs/RESUMING.md`](docs/RESUMING.md) for resuming interrupted
-   training, evaluating against real external benchmarks (LFW/AgeDB-30/
-   CPLFW), and directions for pushing past the current LFW number.
+   See [`docs/RESULTS_baseline.md`](docs/RESULTS_baseline.md) for
+   evaluating against real external benchmarks (LFW/AgeDB-30/CPLFW).
 
 ## License note
 
