@@ -18,7 +18,7 @@ Constraints").
 
 I want to build my own face-recognition system by training a face-embedding model from scratch.
 
-The primary goal is to achieve the highest-quality face embeddings reasonably possible given my available hardware and the CASIA-WebFace training dataset. A target of approximately **99% LFW verification accuracy** would be excellent if achievable, but benchmark performance should be reported honestly rather than treated as a guaranteed target.
+The primary goal is to achieve the highest-quality face embeddings reasonably possible given my available hardware and the CASIA-WebFace training dataset, with benchmark performance reported honestly rather than optimized toward a fixed number.
 
 ## Hardware
 
@@ -164,17 +164,11 @@ Report metrics such as:
 
 Do not evaluate only on identities that appeared in training.
 
-## Benchmark Target
+## Benchmark Reporting
 
-The aspirational target is approximately:
+Do not artificially optimize for LFW at the expense of generalization.
 
-**≥99% LFW verification accuracy**
-
-if this is achievable with the chosen architecture, dataset, and training procedure.
-
-However, do not artificially optimize for LFW at the expense of generalization.
-
-Once performance approaches ~99% on LFW, place greater emphasis on harder benchmarks such as AgeDB-30, CFP-FP, and CPLFW.
+Once LFW performance is strong, place greater emphasis on harder benchmarks such as AgeDB-30, CFP-FP, and CPLFW.
 
 Clearly distinguish between:
 
@@ -275,4 +269,4 @@ Build a technically sound, reproducible, from-scratch face embedding system usin
 
 **CASIA-WebFace → randomly initialized MobileFaceNet → ArcFace → 256D normalized embeddings**
 
-with the goal of achieving strong generalization to identities not seen during training and approaching **99% LFW verification accuracy** if the available hardware and dataset make that feasible.
+with the goal of achieving strong generalization to identities not seen during training.

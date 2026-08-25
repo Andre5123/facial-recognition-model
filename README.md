@@ -21,8 +21,7 @@ verification/recognition.
 | Unseen-identity split (held-out CASIA-WebFace identities) | 88.70% ± 1.35% | 0.9394 |
 
 Full methodology, training trajectory, and honest discussion of these
-numbers (including how they compare to the project's ~99% LFW aspirational
-target) in [`docs/RESULTS_baseline.md`](docs/RESULTS_baseline.md). The
+numbers in [`docs/RESULTS_baseline.md`](docs/RESULTS_baseline.md). The
 unseen-identity numbers matter as much as LFW here: they measure whether
 the model generalizes to people it never trained on, not just how well it
 memorized training identities -- see

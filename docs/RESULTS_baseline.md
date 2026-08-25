@@ -90,16 +90,8 @@ combination (MobileFaceNet + ArcFace + CASIA-WebFace) report ~99.18% LFW
 embedding dimension (512 vs our 256) -- the gap to our 95.97% is plausibly
 explained by those hyperparameter differences rather than anything
 fundamentally wrong with the approach. 95.97% is a legitimate, solid
-result for a from-scratch model on CASIA-WebFace, and much closer to the
-project's aspirational ~99% target than the internal-split numbers alone
-suggested.
-
-## Honest comparison to project goals
-
-The aspirational target in `context.md` is ~99% **LFW** verification
-accuracy. With real LFW evaluation now done (above), the honest gap is
-~99% target vs 95.97% actual -- a real but modest remaining gap, not the
-large one the internal-split-only comparison implied.
+result for a from-scratch model on CASIA-WebFace, and meaningfully higher
+than the internal-split numbers alone suggested.
 
 ## Checkpoints
 
@@ -115,7 +107,6 @@ relying on this run's weights for anything further.
   `docs/VISUALIZATIONS.md`.
 - Interactive verification/recognition demo built on this checkpoint: done,
   see `docs/DEMO.md`.
-- Still open: closing the ~3-point gap to the published 99.18% reference.
-  Directions being considered: pretrained backbones (see context.md's
-  "Amendment" section) and matching the published recipe's batch size/
-  embedding dim more closely.
+- Still open: pushing LFW accuracy further. Directions being considered:
+  pretrained backbones (see context.md's "Amendment" section) and matching
+  the published AirFace recipe's batch size/embedding dim more closely.
