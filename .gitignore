@@ -8,6 +8,8 @@ data/**/*.png
 data/**/*.bmp
 # Raw CASIA-WebFace download, extracted at the repo root
 /webface_112x112/
+# LFW photos fetched by scripts/fetch_demo_test_photos.py for trying the demo
+/demo_test_photos/
 # Exported viz data/pages embed actual (small) face thumbnails from the
 # dataset -- fine to keep locally for personal analysis, but not for the
 # public git repo (same redistribution concern as the raw dataset).
